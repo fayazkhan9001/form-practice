@@ -8,6 +8,7 @@ import {
   Route
 } from "react-router-dom";
 import Layout from './pages/Layout';
+import { useEffect, useState } from 'react';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,9 +21,14 @@ const router = createBrowserRouter(
 );
 
 function App() {
+
+
+  
  
   return (
     <div>
+
+  
      <RouterProvider router={router}/>
     </div>
    
