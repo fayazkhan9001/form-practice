@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 function Contact() {
+  
   const [contact, setContact] = useState({
     fullName: "",
     email: "",
@@ -10,18 +11,24 @@ function Contact() {
 
   const [con, setCon] = useState([]);
 
+  const [contactBook, setContactBook] = useState([]);
+
   const [message, setMessage] = useState({
     success: false,
     message: "",
   });
 
+
   useEffect(() => {
     setCon(JSON.parse(localStorage.getItem("contact")));
-  }, []);
+  }, [contact]);
 
   let handleSubmit = (event) => {
     event.preventDefault();
-    localStorage.setItem("contact", JSON.stringify(contact));
+
+    
+    setContactBook([...contactBook, contact])
+    localStorage.setItem("contact", JSON.stringify(contactBook));
 
     setMessage({
       success: true,
@@ -52,6 +59,7 @@ function Contact() {
           ></button>
         </div>
       ) : null}
+
       <form className="row g-3 w-50 py-5" onSubmit={handleSubmit}>
         <div className="col-md-12 ">
           <label htmlFor="fulName" className="form-label">
@@ -102,9 +110,7 @@ function Contact() {
             Message
           </label>
           <textarea
-            onChange={(event) =>
-              setContact({ ...contact, message: event.target.value })
-            }
+            onChange={(event) =>setContact({ ...contact, message: event.target.value }) }
             value={contact.message}
             className="form-control"
             id="message"
@@ -129,12 +135,16 @@ function Contact() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">{con.fullName}</th>
-            <td>{con.email}</td>
-            <td>{con.city}</td>
-            <td>{con.message}</td>
+         {
+          con.map((val)=>{
+            return  <tr>
+            <th scope="row">{val.fullName}</th>
+            <td>{val.email}</td>
+            <td>{val.city}</td>
+            <td>{val.message}</td>
           </tr>
+          })
+         }
         </tbody>
       </table>
     </div>
