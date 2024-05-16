@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+let contacts = [];
 
 function Login() {
   const [contact, setContact] = useState({
@@ -11,17 +15,25 @@ function Login() {
   const [localCon, setLocalCon] = useState([]);
 
   useEffect(()=>{
-   setLocalCon( JSON.parse(localStorage.getItem('contact')));
-  }, [contact]);
-  
+
+    if (JSON.parse(localStorage.getItem('contacts')) != null) {
+      setLocalCon(JSON.parse(localStorage.getItem('contacts')));
+    }
+   }, [contact]);
+
   const [message, setMessage] = useState({
     success: false,
     message: "",
   });
+  
+  const notify = () => toast("Wow so easy!");
+
   let handleSubmit = (event) => {
     event.preventDefault();
+    contacts.push(contact);
+    localStorage.setItem("contacts", JSON.stringify(contacts));
 
-    localStorage.setItem("contact", JSON.stringify(contact));
+    notify ();// react tostify
 
     setMessage({
       success: true,
@@ -118,26 +130,33 @@ function Login() {
         </div>
       </form>
 
-
       <table className="table">
-  <thead>
-    <tr>
-      <th scope="col">Full Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Password</th>
-      <th scope="col">Address</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">{localCon.fullName}</th>
-      <td>{localCon.email}</td>
-      <td>{localCon.password}</td>
-      <td>{localCon.address}</td>
-    </tr>
-   
-  </tbody>
-</table>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Password</th>
+            <th scope="col">Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {localCon.length < 1 ? (
+            <tr><td><h5>No Data Found</h5></td></tr>
+          ) : (
+            localCon.map((val, idx) => (
+              <tr key={idx}>
+                <th scope="row">{idx + 1}</th>
+                <td>{val.fullName}</td>
+                <td>{val.email}</td>
+                <td>{val.password}</td>
+                <td>{val.address}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+      <ToastContainer position="top-center" />
     </div>
   );
 }
