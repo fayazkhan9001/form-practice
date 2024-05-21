@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Link, json } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 let contacts = [];
 
@@ -8,32 +9,32 @@ function Login() {
   const [contact, setContact] = useState({
     fullName: "",
     email: "",
-    password: "",
-    address: "",
+    contact:"",
+    id : Data.now()
   });
   //state for get data from local storage
   const [localCon, setLocalCon] = useState([]);
 
-  useEffect(()=>{
-
-    if (JSON.parse(localStorage.getItem('contacts')) != null) {
-      setLocalCon(JSON.parse(localStorage.getItem('contacts')));
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem("contacts")) != null) {
+      setLocalCon(JSON.parse(localStorage.getItem("contacts")));
     }
-   }, [contact]);
+  }, [contact]);
 
   const [message, setMessage] = useState({
     success: false,
     message: "",
   });
-  
+
   const notify = () => toast("Wow so easy!");
 
   let handleSubmit = (event) => {
     event.preventDefault();
+
+
+
     contacts.push(contact);
     localStorage.setItem("contacts", JSON.stringify(contacts));
-
-    notify ();// react tostify
 
     setMessage({
       success: true,
@@ -44,10 +45,18 @@ function Login() {
     setContact({
       fullName: "",
       email: "",
-      password: "",
-      address: "",
+      contact: ""
     });
+
+    notify(); // react tostify
   };
+
+ const handleDelete = (id)=>{
+  let newContactArr = JSON.parse(localStorage.getItem("contacts"));
+  let filterdArr = newContactArr.filter((c)=>c.id != id);
+  localStorage.setItem("contacts", JSON.stringify(filterdArr))
+  
+ }
 
   return (
     <div className="container">
@@ -94,34 +103,18 @@ function Login() {
           />
         </div>
         <div className="col-md-12">
-          <label htmlFor="inputPassword4" className="form-label">
-            Password
+          <label htmlFor="contact" className="form-label">
+            Contact
           </label>
           <input
             type="text"
-            onChange={(e) =>
-              setContact({ ...contact, password: e.target.value })
-            }
-            value={contact.password}
+            onChange={(e) => setContact({ ...contact, contact: e.target.value })}
+            value={contact.contact}
             className="form-control"
-            id="inputPassword4"
+            id="contact"
           />
         </div>
-        <div className="col-12">
-          <label htmlFor="inputAddress" className="form-label">
-            Address
-          </label>
-          <input
-            type="text"
-            onChange={(e) =>
-              setContact({ ...contact, address: e.target.value })
-            }
-            value={contact.address}
-            className="form-control"
-            id="inputAddress"
-            placeholder="1234 Main St"
-          />
-        </div>
+        
 
         <div className="col-12">
           <button type="submit" className="btn btn-primary">
@@ -136,21 +129,41 @@ function Login() {
             <th scope="col">#</th>
             <th scope="col">Full Name</th>
             <th scope="col">Email</th>
-            <th scope="col">Password</th>
-            <th scope="col">Address</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
           {localCon.length < 1 ? (
-            <tr><td><h5>No Data Found</h5></td></tr>
+            <tr>
+              <td>
+                <h5>No Data Found</h5>
+              </td>
+            </tr>
           ) : (
             localCon.map((val, idx) => (
               <tr key={idx}>
                 <th scope="row">{idx + 1}</th>
                 <td>{val.fullName}</td>
                 <td>{val.email}</td>
-                <td>{val.password}</td>
-                <td>{val.address}</td>
+                <td>{val.contact}</td>
+
+                <td>
+                  <Link to={`/edit/${val.id}`} className="btn btn-warning me-2">
+                    {" "}
+                    <i className="bi bi-pencil-square"></i>
+                  </Link>
+                  <button
+                    className="btn btn-danger me-2"
+                    onClick={(id)=>handleDelete(val.id)}
+                  >
+                    {" "}
+                    <i className="bi bi-trash3"></i>
+                  </button>
+                  <a href={`Tel:${val.contact}`} className="btn btn-primary">
+                    <i className="bi bi-telephone-fill"></i>
+                  </a>
+                </td>
               </tr>
             ))
           )}
